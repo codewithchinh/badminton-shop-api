@@ -22,3 +22,28 @@ Content-Type: application/json
   "name": "Lining",
   "description": "Chinese badminton equipment brand"
 }
+
+###
+
+GET {{BadmintonShop.Api_HostAddress}}/api/categories
+Accept: application/json
+
+###
+
+POST {{BadmintonShop.Api_HostAddress}}/api/categories
+Content-Type: application/json
+
+{
+  "name": "Rackets",
+  "description": "Badminton rackets"
+}
+
+###
+
+POST {{BadmintonShop.Api_HostAddress}}/api/categories
+Content-Type: application/json
+
+{
+  "name": "Shoes",
+  "description": "Badminton shoes"
+}

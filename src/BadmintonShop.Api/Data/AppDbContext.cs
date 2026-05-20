@@ -11,4 +11,6 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<Brand> Brands => Set<Brand>();
+
+    public DbSet<Category> Categories => Set<Category>();
 }
