@@ -23,7 +23,7 @@ Content-Type: application/json
   "description": "Chinese badminton equipment brand"
 }
 
-###
+### CAGEGOIES
 
 GET {{BadmintonShop.Api_HostAddress}}/api/categories
 Accept: application/json
