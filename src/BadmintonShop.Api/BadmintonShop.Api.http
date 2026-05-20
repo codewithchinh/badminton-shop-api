@@ -1,6 +1,24 @@
 @BadmintonShop.Api_HostAddress = http://localhost:5120
 
-GET {{BadmintonShop.Api_HostAddress}}/weatherforecast/
+GET {{BadmintonShop.Api_HostAddress}}/api/brands
 Accept: application/json
 
 ###
+
+POST {{BadmintonShop.Api_HostAddress}}/api/brands
+Content-Type: application/json
+
+{
+  "name": "Yonex",
+  "description": "Japanese badminton equipment brand"
+}
+
+###
+
+POST {{BadmintonShop.Api_HostAddress}}/api/brands
+Content-Type: application/json
+
+{
+  "name": "Lining",
+  "description": "Chinese badminton equipment brand"
+}
