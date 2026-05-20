@@ -47,3 +47,13 @@ Content-Type: application/json
   "name": "Shoes",
   "description": "Badminton shoes"
 }
+
+### Test lỗi name/description khi tạo cagegory
+
+POST {{BadmintonShop.Api_HostAddress}}/api/categories
+Content-Type: application/json
+
+{
+  "name": "",
+  "description": "This should fail"
+}
