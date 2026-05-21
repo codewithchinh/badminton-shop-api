@@ -43,9 +43,19 @@ public class CategoriesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Category>> CreateCategory(CreateCategoryRequest request)
     {
+        var name = request.Name.Trim();
+
+        var nameExists = await _dbContext.Categories
+            .AnyAsync(category => category.Name == name);
+
+        if (nameExists)
+        {
+            return Conflict("Category name already exists.");
+        }
+
         var category = new Category
         {
-            Name = request.Name.Trim(),
+            Name = name,
             Description = request.Description?.Trim(),
             IsActive = true,
             CreatedAt = DateTime.UtcNow
@@ -67,7 +77,17 @@ public class CategoriesController : ControllerBase
             return NotFound();
         }
 
-        category.Name = request.Name.Trim();
+        var name = request.Name.Trim();
+
+        var nameExists = await _dbContext.Categories
+            .AnyAsync(existingCategory => existingCategory.Id != id && existingCategory.Name == name);
+
+        if (nameExists)
+        {
+            return Conflict("Category name already exists.");
+        }
+
+        category.Name = name;
         category.Description = request.Description?.Trim();
         category.IsActive = request.IsActive;
 

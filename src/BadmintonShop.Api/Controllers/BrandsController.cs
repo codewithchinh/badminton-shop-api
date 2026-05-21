@@ -43,9 +43,20 @@ public class BrandsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Brand>> CreateBrand(CreateBrandRequest request)
     {
+        var name = request.Name.Trim();
+
+        var nameExists = await _dbContext.Brands
+            .AnyAsync(brand => brand.Name == name);
+
+        if (nameExists)
+        {
+            return Conflict("Brand name already exists.");
+        }
+
+
         var brand = new Brand
         {
-            Name = request.Name.Trim(),
+            Name = name,
             Description = request.Description?.Trim(),
             IsActive = true,
             CreatedAt = DateTime.UtcNow
@@ -66,8 +77,18 @@ public class BrandsController : ControllerBase
         {
             return NotFound();
         }
+        
+        var name = request.Name.Trim();
 
-        brand.Name = request.Name.Trim();
+        var nameExists = await _dbContext.Brands
+            .AnyAsync(existingBrand => existingBrand.Id != id && existingBrand.Name == name);
+
+        if (nameExists)
+        {
+        return Conflict("Brand name already exists.");
+    }
+
+        brand.Name = name;
         brand.Description = request.Description?.Trim();
         brand.IsActive = request.IsActive;
 

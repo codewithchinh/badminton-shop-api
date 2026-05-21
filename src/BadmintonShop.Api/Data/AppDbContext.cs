@@ -13,4 +13,16 @@ public class AppDbContext : DbContext
     public DbSet<Brand> Brands => Set<Brand>();
 
     public DbSet<Category> Categories => Set<Category>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+    modelBuilder.Entity<Brand>()
+        .HasIndex(brand => brand.Name)
+        .IsUnique();
+
+    modelBuilder.Entity<Category>()
+        .HasIndex(category => category.Name)
+        .IsUnique();
+}
+
 }
