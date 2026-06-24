@@ -70,11 +70,45 @@ Content-Type: application/json
 
 ### Test tạo trùng category:
 
-
 POST {{BadmintonShop.Api_HostAddress}}/api/categories
 Content-Type: application/json
 
 {
   "name": "Shoes",
   "description": "Duplicate test"
+}
+
+### Test create project
+
+GET {{BadmintonShop.Api_HostAddress}}/api/products
+Accept: application/json
+
+###
+
+POST {{BadmintonShop.Api_HostAddress}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Yonex Astrox 88D Pro",
+  "description": "Head-heavy attacking badminton racket",
+  "brandId": 1,
+  "categoryId": 1,
+  "variants": [
+    {
+      "sku": "AX88DPRO-4UG5",
+      "price": 4290000,
+      "stockQuantity": 10,
+      "weight": "4U",
+      "gripSize": "G5",
+      "color": "Camel Gold"
+    },
+    {
+      "sku": "AX88DPRO-3UG5",
+      "price": 4290000,
+      "stockQuantity": 5,
+      "weight": "3U",
+      "gripSize": "G5",
+      "color": "Camel Gold"
+    }
+  ]
 }

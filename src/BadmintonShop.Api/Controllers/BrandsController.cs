@@ -20,9 +20,7 @@ public class BrandsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<Brand>>> GetBrands()
     {
-        var brands = await _dbContext.Brands
-            .OrderBy(brand => brand.Name)
-            .ToListAsync();
+        var brands = await _dbContext.Brands.OrderBy(brand => brand.Name).ToListAsync();
 
         return Ok(brands);
     }
@@ -45,21 +43,19 @@ public class BrandsController : ControllerBase
     {
         var name = request.Name.Trim();
 
-        var nameExists = await _dbContext.Brands
-            .AnyAsync(brand => brand.Name == name);
+        var nameExists = await _dbContext.Brands.AnyAsync(brand => brand.Name == name);
 
         if (nameExists)
         {
             return Conflict("Brand name already exists.");
         }
 
-
         var brand = new Brand
         {
             Name = name,
             Description = request.Description?.Trim(),
             IsActive = true,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
         };
 
         _dbContext.Brands.Add(brand);
@@ -77,16 +73,17 @@ public class BrandsController : ControllerBase
         {
             return NotFound();
         }
-        
+
         var name = request.Name.Trim();
 
-        var nameExists = await _dbContext.Brands
-            .AnyAsync(existingBrand => existingBrand.Id != id && existingBrand.Name == name);
+        var nameExists = await _dbContext.Brands.AnyAsync(existingBrand =>
+            existingBrand.Id != id && existingBrand.Name == name
+        );
 
         if (nameExists)
         {
-        return Conflict("Brand name already exists.");
-    }
+            return Conflict("Brand name already exists.");
+        }
 
         brand.Name = name;
         brand.Description = request.Description?.Trim();
