@@ -93,6 +93,15 @@ button:hover {
   background: #1e293b;
 }
 
+.secondary-button {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.secondary-button:hover {
+  background: #cbd5e1;
+}
+
 .brand-list {
   display: grid;
   gap: 12px;
