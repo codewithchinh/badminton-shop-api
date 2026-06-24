@@ -11,12 +11,25 @@ type Brand = {
   createdAt: string
 }
 
+type Category = {
+  id: number
+  name: string
+  description: string | null
+  isActive: boolean
+  createdAt: string
+}
+
 function App() {
   const [brands, setBrands] = useState<Brand[]>([])
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState('')
+
+  const [categories, setCategories] = useState<Category[]>([])
+  const [categoryName, setCategoryName] = useState('')
+  const [categoryDescription, setCategoryDescription] = useState('')
+  const [categoryMessage, setCategoryMessage] = useState('')
 
   async function loadBrands() {
     setIsLoading(true)
@@ -35,6 +48,23 @@ function App() {
       setMessage(error instanceof Error ? error.message : 'Unexpected error.')
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  async function loadCategories() {
+    setCategoryMessage('')
+
+    try {
+      const response = await fetch(`${apiBaseUrl}/categories`)
+
+      if (!response.ok) {
+        throw new Error('Failed to load categories.')
+      }
+
+      const data = (await response.json()) as Category[]
+      setCategories(data)
+    } catch (error) {
+      setCategoryMessage(error instanceof Error ? error.message : 'Unexpected error.')
     }
   }
 
@@ -69,8 +99,40 @@ function App() {
     await loadBrands()
   }
 
+  async function createCategory(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setCategoryMessage('')
+
+    const response = await fetch(`${apiBaseUrl}/categories`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: categoryName,
+        description: categoryDescription,
+      }),
+    })
+
+    if (response.status === 409) {
+      setCategoryMessage('Category name already exists.')
+      return
+    }
+
+    if (!response.ok) {
+      setCategoryMessage('Could not create category.')
+      return
+    }
+
+    setCategoryName('')
+    setCategoryDescription('')
+    setCategoryMessage('Category created.')
+    await loadCategories()
+  }
+
   useEffect(() => {
     loadBrands()
+    loadCategories()
   }, [])
 
   return (
@@ -133,6 +195,52 @@ function App() {
           )}
         </section>
       </section>
+
+      <section className="content-grid section-gap">
+        <form className="panel" onSubmit={createCategory}>
+          <h2>Create category</h2>
+
+          <label>
+            Name
+            <input
+              value={categoryName}
+              onChange={(event) => setCategoryName(event.target.value)}
+              placeholder="Rackets"
+              required
+            />
+          </label>
+
+          <label>
+            Description
+            <textarea
+              value={categoryDescription}
+              onChange={(event) => setCategoryDescription(event.target.value)}
+              placeholder="Badminton rackets"
+            />
+          </label>
+
+          <button type="submit">Create</button>
+
+          {categoryMessage && <p className="message">{categoryMessage}</p>}
+        </form>
+
+        <section className="panel">
+          <h2>Category list</h2>
+
+          <div className="brand-list">
+            {categories.map((category) => (
+              <article className="brand-item" key={category.id}>
+                <div>
+                  <h3>{category.name}</h3>
+                  <p>{category.description || 'No description'}</p>
+                </div>
+                <span>{category.isActive ? 'Active' : 'Inactive'}</span>
+              </article>
+            ))}
+          </div>
+        </section>
+      </section>
+
     </main>
   )
 }

@@ -125,4 +125,9 @@ button:hover {
   .content-grid {
     grid-template-columns: 1fr;
   }
+
+  .section-gap {
+    margin-top: 20px;
+  }
+
 }
