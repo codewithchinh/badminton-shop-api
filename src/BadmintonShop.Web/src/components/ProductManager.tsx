@@ -20,6 +20,21 @@ export function ProductManager({ brands, categories }: ProductManagerProps) {
   const [variantGripSize, setVariantGripSize] = useState('')
   const [variantColor, setVariantColor] = useState('')
   const [productMessage, setProductMessage] = useState('')
+  const [filterBrandId, setFilterBrandId] = useState('')
+  const [filterCategoryId, setFilterCategoryId] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
+
+  const filteredProducts = products.filter((product) => {
+    const matchesBrand = !filterBrandId || product.brandId === Number(filterBrandId)
+    const matchesCategory = !filterCategoryId || product.categoryId === Number(filterCategoryId)
+    const normalizedSearchTerm = searchTerm.trim().toLowerCase()
+    const matchesSearch =
+      !normalizedSearchTerm ||
+      product.name.toLowerCase().includes(normalizedSearchTerm) ||
+      product.variants.some((variant) => variant.sku.toLowerCase().includes(normalizedSearchTerm))
+
+    return matchesBrand && matchesCategory && matchesSearch
+  })
 
   async function loadProducts() {
     setProductMessage('')
@@ -206,8 +221,49 @@ export function ProductManager({ brands, categories }: ProductManagerProps) {
       <section className="panel">
         <h2>Danh sách sản phẩm</h2>
 
+        <div className="filter-bar">
+          <label>
+            Tìm kiếm
+            <input
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Tên sản phẩm hoặc SKU"
+            />
+          </label>
+
+          <label>
+            Thương hiệu
+            <select
+              value={filterBrandId}
+              onChange={(event) => setFilterBrandId(event.target.value)}
+            >
+              <option value="">Tất cả thương hiệu</option>
+              {brands.map((brand) => (
+                <option key={brand.id} value={brand.id}>
+                  {brand.name}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            Danh mục
+            <select
+              value={filterCategoryId}
+              onChange={(event) => setFilterCategoryId(event.target.value)}
+            >
+              <option value="">Tất cả danh mục</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+
         <div className="product-list">
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <article className="product-item" key={product.id}>
               <div>
                 <h3>{product.name}</h3>
@@ -228,6 +284,8 @@ export function ProductManager({ brands, categories }: ProductManagerProps) {
             </article>
           ))}
         </div>
+
+        {filteredProducts.length === 0 && <p className="muted">Không có sản phẩm phù hợp.</p>}
       </section>
     </section>
   )
