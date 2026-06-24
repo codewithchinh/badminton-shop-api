@@ -1,14 +1,7 @@
+import type { Brand } from '../types/catalog'
 import { useEffect, useState, type FormEvent } from 'react'
 
 import { apiBaseUrl } from '../api/config'
-
-export type Brand = {
-    id: number
-    name: string
-    description: string | null
-    isActive: boolean
-    createdAt: string
-}
 
 type BrandManagerProps = {
     onBrandsChanged?: () => void

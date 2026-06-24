@@ -1,14 +1,6 @@
+import type { Category } from '../types/catalog'
 import { useEffect, useState, type FormEvent } from 'react'
-
 import { apiBaseUrl } from '../api/config'
-
-export type Category = {
-    id: number
-    name: string
-    description: string | null
-    isActive: boolean
-    createdAt: string
-}
 
 type CategoryManagerProps = {
     onCategoriesChanged?: () => void

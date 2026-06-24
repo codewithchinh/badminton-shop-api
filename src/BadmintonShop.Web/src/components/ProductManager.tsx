@@ -1,34 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import type { Brand } from './BrandManager'
-import type { Category } from './CategoryManager'
+import type { Brand, Category, Product } from '../types/catalog'
 
 import { apiBaseUrl } from '../api/config'
-
-type ProductVariant = {
-    id: number
-    sku: string
-    price: number
-    stockQuantity: number
-    weight: string | null
-    gripSize: string | null
-    shoeSize: string | null
-    color: string | null
-    isActive: boolean
-    createdAt: string
-}
-
-type Product = {
-    id: number
-    name: string
-    description: string | null
-    brandId: number
-    brand: Brand
-    categoryId: number
-    category: Category
-    isActive: boolean
-    createdAt: string
-    variants: ProductVariant[]
-}
 
 type ProductManagerProps = {
     brands: Brand[]
