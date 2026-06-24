@@ -3,8 +3,7 @@ import { BrandManager, type Brand } from './components/BrandManager'
 import { CategoryManager, type Category } from './components/CategoryManager'
 import { ProductManager } from './components/ProductManager'
 import './App.css'
-
-const apiBaseUrl = 'http://localhost:5120/api'
+import { apiBaseUrl } from './api/config'
 
 function App() {
   const [brands, setBrands] = useState<Brand[]>([])

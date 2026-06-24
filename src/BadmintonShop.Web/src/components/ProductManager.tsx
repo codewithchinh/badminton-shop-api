@@ -2,7 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import type { Brand } from './BrandManager'
 import type { Category } from './CategoryManager'
 
-const apiBaseUrl = 'http://localhost:5120/api'
+import { apiBaseUrl } from '../api/config'
 
 type ProductVariant = {
     id: number

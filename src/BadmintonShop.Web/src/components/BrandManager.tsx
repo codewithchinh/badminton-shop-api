@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 
-const apiBaseUrl = 'http://localhost:5120/api'
+import { apiBaseUrl } from '../api/config'
 
 export type Brand = {
     id: number
