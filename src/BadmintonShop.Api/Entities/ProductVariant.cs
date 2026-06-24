@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace BadmintonShop.Api.Entities;
 
 public class ProductVariant
@@ -6,6 +8,7 @@ public class ProductVariant
 
     public int ProductId { get; set; }
 
+    [JsonIgnore]
     public Product Product { get; set; } = null!;
 
     public string Sku { get; set; } = string.Empty;
