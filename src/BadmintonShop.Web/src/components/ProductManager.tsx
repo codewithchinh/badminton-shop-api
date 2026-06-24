@@ -28,8 +28,9 @@ export function ProductManager({ brands, categories }: ProductManagerProps) {
   const selectedCategory = categories.find(
     (category) => category.id === Number(productCategoryId),
   )
-  const isRacketCategory = selectedCategory?.name === 'Vợt cầu lông'
-  const isShoeCategory = selectedCategory?.name === 'Giày cầu lông'
+  const selectedCategoryName = selectedCategory?.name.toLowerCase() ?? ''
+  const isRacketCategory = selectedCategoryName.includes('vợt')
+  const isShoeCategory = selectedCategoryName.includes('giày')
 
   const filteredProducts = products.filter((product) => {
     const matchesBrand = !filterBrandId || product.brandId === Number(filterBrandId)
@@ -149,12 +150,13 @@ export function ProductManager({ brands, categories }: ProductManagerProps) {
               const category = categories.find(
                 (item) => item.id === Number(event.target.value),
               )
+              const categoryName = category?.name.toLowerCase() ?? ''
 
-              if (category?.name !== 'Giày cầu lông') {
+              if (!categoryName.includes('giày')) {
                 setVariantShoeSize('')
               }
 
-              if (category?.name !== 'Vợt cầu lông') {
+              if (!categoryName.includes('vợt')) {
                 setVariantWeight('')
                 setVariantGripSize('')
               }
