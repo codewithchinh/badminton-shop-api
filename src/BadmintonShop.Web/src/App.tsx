@@ -1,23 +1,9 @@
 import { FormEvent, useEffect, useState } from 'react'
+import { BrandManager, type Brand } from './components/BrandManager'
+import { CategoryManager, type Category } from './components/CategoryManager'
 import './App.css'
 
 const apiBaseUrl = 'http://localhost:5120/api'
-
-type Brand = {
-  id: number
-  name: string
-  description: string | null
-  isActive: boolean
-  createdAt: string
-}
-
-type Category = {
-  id: number
-  name: string
-  description: string | null
-  isActive: boolean
-  createdAt: string
-}
 
 type ProductVariant = {
   id: number
@@ -47,15 +33,8 @@ type Product = {
 
 function App() {
   const [brands, setBrands] = useState<Brand[]>([])
-  const [name, setName] = useState('')
-  const [description, setDescription] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [message, setMessage] = useState('')
 
   const [categories, setCategories] = useState<Category[]>([])
-  const [categoryName, setCategoryName] = useState('')
-  const [categoryDescription, setCategoryDescription] = useState('')
-  const [categoryMessage, setCategoryMessage] = useState('')
 
   const [products, setProducts] = useState<Product[]>([])
   const [productName, setProductName] = useState('')
@@ -71,40 +50,25 @@ function App() {
   const [productMessage, setProductMessage] = useState('')
 
   async function loadBrands() {
-    setIsLoading(true)
-    setMessage('')
+    const response = await fetch(`${apiBaseUrl}/brands`)
 
-    try {
-      const response = await fetch(`${apiBaseUrl}/brands`)
-
-      if (!response.ok) {
-        throw new Error('Failed to load brands.')
-      }
-
-      const data = (await response.json()) as Brand[]
-      setBrands(data)
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Unexpected error.')
-    } finally {
-      setIsLoading(false)
+    if (!response.ok) {
+      return
     }
+
+    const data = (await response.json()) as Brand[]
+    setBrands(data)
   }
 
   async function loadCategories() {
-    setCategoryMessage('')
+    const response = await fetch(`${apiBaseUrl}/categories`)
 
-    try {
-      const response = await fetch(`${apiBaseUrl}/categories`)
-
-      if (!response.ok) {
-        throw new Error('Failed to load categories.')
-      }
-
-      const data = (await response.json()) as Category[]
-      setCategories(data)
-    } catch (error) {
-      setCategoryMessage(error instanceof Error ? error.message : 'Unexpected error.')
+    if (!response.ok) {
+      return
     }
+
+    const data = (await response.json()) as Category[]
+    setCategories(data)
   }
 
   async function loadProducts() {
@@ -114,76 +78,14 @@ function App() {
       const response = await fetch(`${apiBaseUrl}/products`)
 
       if (!response.ok) {
-        throw new Error('Failed to load products.')
+        throw new Error('Không tải được danh sách sản phẩm.')
       }
 
       const data = (await response.json()) as Product[]
       setProducts(data)
     } catch (error) {
-      setProductMessage(error instanceof Error ? error.message : 'Unexpected error.')
+      setProductMessage(error instanceof Error ? error.message : 'Đã xảy ra lỗi.')
     }
-  }
-
-  async function createBrand(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setMessage('')
-
-    const response = await fetch(`${apiBaseUrl}/brands`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name,
-        description,
-      }),
-    })
-
-    if (response.status === 409) {
-      setMessage('Brand name already exists.')
-      return
-    }
-
-    if (!response.ok) {
-      setMessage('Could not create brand.')
-      return
-    }
-
-    setName('')
-    setDescription('')
-    setMessage('Brand created.')
-    await loadBrands()
-  }
-
-  async function createCategory(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setCategoryMessage('')
-
-    const response = await fetch(`${apiBaseUrl}/categories`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name: categoryName,
-        description: categoryDescription,
-      }),
-    })
-
-    if (response.status === 409) {
-      setCategoryMessage('Category name already exists.')
-      return
-    }
-
-    if (!response.ok) {
-      setCategoryMessage('Could not create category.')
-      return
-    }
-
-    setCategoryName('')
-    setCategoryDescription('')
-    setCategoryMessage('Category created.')
-    await loadCategories()
   }
 
   async function createProduct(event: FormEvent<HTMLFormElement>) {
@@ -214,13 +116,13 @@ function App() {
     })
 
     if (response.status === 409) {
-      setProductMessage('Product name or SKU already exists.')
+      setProductMessage('Tên sản phẩm hoặc mã SKU đã tồn tại.')
       return
     }
 
     if (!response.ok) {
       const errorText = await response.text()
-      setProductMessage(errorText || 'Could not create product.')
+      setProductMessage(errorText || 'Không thể tạo sản phẩm.')
       return
     }
 
@@ -234,7 +136,7 @@ function App() {
     setVariantWeight('')
     setVariantGripSize('')
     setVariantColor('')
-    setProductMessage('Product created.')
+    setProductMessage('Đã tạo sản phẩm.')
     await loadProducts()
   }
 
@@ -248,114 +150,24 @@ function App() {
     <main className="app-shell">
       <section className="page-header">
         <div>
-          <p className="eyebrow">Badminton Shop Admin</p>
-          <h1>Brands</h1>
+          <p className="eyebrow">Quản trị cửa hàng cầu lông</p>
+          <h1>Quản lý sản phẩm</h1>
         </div>
         <button type="button" onClick={loadBrands}>
           Refresh
         </button>
       </section>
 
-      <section className="content-grid">
-        <form className="panel" onSubmit={createBrand}>
-          <h2>Create brand</h2>
+      <BrandManager onBrandsChanged={loadBrands} />
 
-          <label>
-            Name
-            <input
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              placeholder="Yonex"
-              required
-            />
-          </label>
-
-          <label>
-            Description
-            <textarea
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
-              placeholder="Japanese badminton equipment brand"
-            />
-          </label>
-
-          <button type="submit">Create</button>
-
-          {message && <p className="message">{message}</p>}
-        </form>
-
-        <section className="panel">
-          <h2>Brand list</h2>
-
-          {isLoading ? (
-            <p className="muted">Loading...</p>
-          ) : (
-            <div className="brand-list">
-              {brands.map((brand) => (
-                <article className="brand-item" key={brand.id}>
-                  <div>
-                    <h3>{brand.name}</h3>
-                    <p>{brand.description || 'No description'}</p>
-                  </div>
-                  <span>{brand.isActive ? 'Active' : 'Inactive'}</span>
-                </article>
-              ))}
-            </div>
-          )}
-        </section>
-      </section>
-
-      <section className="content-grid section-gap">
-        <form className="panel" onSubmit={createCategory}>
-          <h2>Create category</h2>
-
-          <label>
-            Name
-            <input
-              value={categoryName}
-              onChange={(event) => setCategoryName(event.target.value)}
-              placeholder="Rackets"
-              required
-            />
-          </label>
-
-          <label>
-            Description
-            <textarea
-              value={categoryDescription}
-              onChange={(event) => setCategoryDescription(event.target.value)}
-              placeholder="Badminton rackets"
-            />
-          </label>
-
-          <button type="submit">Create</button>
-
-          {categoryMessage && <p className="message">{categoryMessage}</p>}
-        </form>
-
-        <section className="panel">
-          <h2>Category list</h2>
-
-          <div className="brand-list">
-            {categories.map((category) => (
-              <article className="brand-item" key={category.id}>
-                <div>
-                  <h3>{category.name}</h3>
-                  <p>{category.description || 'No description'}</p>
-                </div>
-                <span>{category.isActive ? 'Active' : 'Inactive'}</span>
-              </article>
-            ))}
-          </div>
-        </section>
-      </section>
+      <CategoryManager onCategoriesChanged={loadCategories} />
 
       <section className="content-grid section-gap">
         <form className="panel" onSubmit={createProduct}>
-          <h2>Create product</h2>
+          <h2>Tạo sản phẩm</h2>
 
           <label>
-            Name
+            Tên sản phẩm
             <input
               value={productName}
               onChange={(event) => setProductName(event.target.value)}
@@ -365,22 +177,22 @@ function App() {
           </label>
 
           <label>
-            Description
+            Mô tả
             <textarea
               value={productDescription}
               onChange={(event) => setProductDescription(event.target.value)}
-              placeholder="Head-heavy attacking badminton racket"
+              placeholder="Vợt cầu lông thiên công, nặng đầu"
             />
           </label>
 
           <label>
-            Brand
+            Thương hiệu
             <select
               value={productBrandId}
               onChange={(event) => setProductBrandId(event.target.value)}
               required
             >
-              <option value="">Select brand</option>
+              <option value="">Chọn thương hiệu</option>
               {brands.map((brand) => (
                 <option key={brand.id} value={brand.id}>
                   {brand.name}
@@ -390,13 +202,13 @@ function App() {
           </label>
 
           <label>
-            Category
+            Danh mục
             <select
               value={productCategoryId}
               onChange={(event) => setProductCategoryId(event.target.value)}
               required
             >
-              <option value="">Select category</option>
+              <option value="">Chọn danh mục</option>
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
@@ -405,7 +217,7 @@ function App() {
             </select>
           </label>
 
-          <div className="form-divider">Variant</div>
+          <div className="form-divider">Biến thể</div>
 
           <label>
             SKU
@@ -419,7 +231,7 @@ function App() {
 
           <div className="form-row">
             <label>
-              Price
+              Giá bán
               <input
                 type="number"
                 min="0"
@@ -431,7 +243,7 @@ function App() {
             </label>
 
             <label>
-              Stock
+              Tồn kho
               <input
                 type="number"
                 min="0"
@@ -445,7 +257,7 @@ function App() {
 
           <div className="form-row">
             <label>
-              Weight
+              Trọng lượng
               <input
                 value={variantWeight}
                 onChange={(event) => setVariantWeight(event.target.value)}
@@ -454,7 +266,7 @@ function App() {
             </label>
 
             <label>
-              Grip size
+              Chu vi cán
               <input
                 value={variantGripSize}
                 onChange={(event) => setVariantGripSize(event.target.value)}
@@ -464,7 +276,7 @@ function App() {
           </div>
 
           <label>
-            Color
+            Màu sắc
             <input
               value={variantColor}
               onChange={(event) => setVariantColor(event.target.value)}
@@ -472,20 +284,20 @@ function App() {
             />
           </label>
 
-          <button type="submit">Create product</button>
+          <button type="submit">Tạo sản phẩm</button>
 
           {productMessage && <p className="message">{productMessage}</p>}
         </form>
 
         <section className="panel">
-          <h2>Product list</h2>
+          <h2>Danh sách sản phẩm</h2>
 
           <div className="product-list">
             {products.map((product) => (
               <article className="product-item" key={product.id}>
                 <div>
                   <h3>{product.name}</h3>
-                  <p>{product.description || 'No description'}</p>
+                  <p>{product.description || 'Chưa có mô tả'}</p>
                   <p>
                     {product.brand?.name} · {product.category?.name}
                   </p>
@@ -494,7 +306,7 @@ function App() {
                 <div className="variant-list">
                   {product.variants.map((variant) => (
                     <span key={variant.id}>
-                      {variant.sku} · {variant.price.toLocaleString('vi-VN')} VND · Stock{' '}
+                      {variant.sku} · {variant.price.toLocaleString('vi-VN')} VND · Tồn kho{' '}
                       {variant.stockQuantity}
                     </span>
                   ))}
