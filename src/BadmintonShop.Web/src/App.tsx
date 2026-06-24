@@ -4,32 +4,28 @@ import { CategoryManager } from './components/CategoryManager'
 import type { Brand, Category } from './types/catalog'
 import { ProductManager } from './components/ProductManager'
 import './App.css'
-import { apiBaseUrl } from './api/config'
+import { getBrands, getCategories } from './api/catalogApi'
 
 function App() {
   const [brands, setBrands] = useState<Brand[]>([])
   const [categories, setCategories] = useState<Category[]>([])
 
   async function loadBrands() {
-    const response = await fetch(`${apiBaseUrl}/brands`)
-
-    if (!response.ok) {
-      return
+    try {
+      const data = await getBrands()
+      setBrands(data)
+    } catch {
+      setBrands([])
     }
-
-    const data = (await response.json()) as Brand[]
-    setBrands(data)
   }
 
   async function loadCategories() {
-    const response = await fetch(`${apiBaseUrl}/categories`)
-
-    if (!response.ok) {
-      return
+    try {
+      const data = await getCategories()
+      setCategories(data)
+    } catch {
+      setCategories([])
     }
-
-    const data = (await response.json()) as Category[]
-    setCategories(data)
   }
 
   useEffect(() => {
