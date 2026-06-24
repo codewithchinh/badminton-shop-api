@@ -31,6 +31,7 @@ export type Product = {
     id: number
     name: string
     description: string | null
+    imageUrl: string | null
     brandId: number
     brand: Brand
     categoryId: number

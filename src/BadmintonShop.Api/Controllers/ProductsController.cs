@@ -100,6 +100,7 @@ public class ProductsController : ControllerBase
         {
             Name = name,
             Description = request.Description?.Trim(),
+            ImageUrl = request.ImageUrl?.Trim(),
             BrandId = request.BrandId,
             CategoryId = request.CategoryId,
             IsActive = true,

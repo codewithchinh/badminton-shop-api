@@ -3,333 +3,349 @@ import { createProduct, getProducts } from '../api/catalogApi'
 import type { Brand, Category, Product } from '../types/catalog'
 
 type ProductManagerProps = {
-  brands: Brand[]
-  categories: Category[]
+    brands: Brand[]
+    categories: Category[]
 }
 
 export function ProductManager({ brands, categories }: ProductManagerProps) {
-  const [products, setProducts] = useState<Product[]>([])
-  const [productName, setProductName] = useState('')
-  const [productDescription, setProductDescription] = useState('')
-  const [productBrandId, setProductBrandId] = useState('')
-  const [productCategoryId, setProductCategoryId] = useState('')
-  const [variantSku, setVariantSku] = useState('')
-  const [variantPrice, setVariantPrice] = useState('')
-  const [variantStock, setVariantStock] = useState('')
-  const [variantWeight, setVariantWeight] = useState('')
-  const [variantGripSize, setVariantGripSize] = useState('')
-  const [variantShoeSize, setVariantShoeSize] = useState('')
-  const [variantColor, setVariantColor] = useState('')
-  const [productMessage, setProductMessage] = useState('')
-  const [filterBrandId, setFilterBrandId] = useState('')
-  const [filterCategoryId, setFilterCategoryId] = useState('')
-  const [searchTerm, setSearchTerm] = useState('')
+    const [products, setProducts] = useState<Product[]>([])
+    const [productName, setProductName] = useState('')
+    const [productDescription, setProductDescription] = useState('')
+    const [productImageUrl, setProductImageUrl] = useState('')
+    const [productBrandId, setProductBrandId] = useState('')
+    const [productCategoryId, setProductCategoryId] = useState('')
+    const [variantSku, setVariantSku] = useState('')
+    const [variantPrice, setVariantPrice] = useState('')
+    const [variantStock, setVariantStock] = useState('')
+    const [variantWeight, setVariantWeight] = useState('')
+    const [variantGripSize, setVariantGripSize] = useState('')
+    const [variantShoeSize, setVariantShoeSize] = useState('')
+    const [variantColor, setVariantColor] = useState('')
+    const [productMessage, setProductMessage] = useState('')
+    const [filterBrandId, setFilterBrandId] = useState('')
+    const [filterCategoryId, setFilterCategoryId] = useState('')
+    const [searchTerm, setSearchTerm] = useState('')
 
-  const selectedCategory = categories.find(
-    (category) => category.id === Number(productCategoryId),
-  )
-  const selectedCategoryName = selectedCategory?.name.toLowerCase() ?? ''
-  const isRacketCategory = selectedCategoryName.includes('vợt')
-  const isShoeCategory = selectedCategoryName.includes('giày')
+    const selectedCategory = categories.find(
+        (category) => category.id === Number(productCategoryId),
+    )
+    const selectedCategoryName = selectedCategory?.name.toLowerCase() ?? ''
+    const isRacketCategory = selectedCategoryName.includes('vợt')
+    const isShoeCategory = selectedCategoryName.includes('giày')
 
-  const filteredProducts = products.filter((product) => {
-    const matchesBrand = !filterBrandId || product.brandId === Number(filterBrandId)
-    const matchesCategory = !filterCategoryId || product.categoryId === Number(filterCategoryId)
-    const normalizedSearchTerm = searchTerm.trim().toLowerCase()
-    const matchesSearch =
-      !normalizedSearchTerm ||
-      product.name.toLowerCase().includes(normalizedSearchTerm) ||
-      product.variants.some((variant) => variant.sku.toLowerCase().includes(normalizedSearchTerm))
+    const filteredProducts = products.filter((product) => {
+        const matchesBrand = !filterBrandId || product.brandId === Number(filterBrandId)
+        const matchesCategory = !filterCategoryId || product.categoryId === Number(filterCategoryId)
+        const normalizedSearchTerm = searchTerm.trim().toLowerCase()
+        const matchesSearch =
+            !normalizedSearchTerm ||
+            product.name.toLowerCase().includes(normalizedSearchTerm) ||
+            product.variants.some((variant) => variant.sku.toLowerCase().includes(normalizedSearchTerm))
 
-    return matchesBrand && matchesCategory && matchesSearch
-  })
+        return matchesBrand && matchesCategory && matchesSearch
+    })
 
-  async function loadProducts() {
-    setProductMessage('')
+    async function loadProducts() {
+        setProductMessage('')
 
-    try {
-      const data = await getProducts()
-      setProducts(data)
-    } catch (error) {
-      setProductMessage(error instanceof Error ? error.message : 'Đã xảy ra lỗi.')
+        try {
+            const data = await getProducts()
+            setProducts(data)
+        } catch (error) {
+            setProductMessage(error instanceof Error ? error.message : 'Đã xảy ra lỗi.')
+        }
     }
-  }
 
-  async function handleCreateProduct(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setProductMessage('')
+    async function handleCreateProduct(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault()
+        setProductMessage('')
 
-    try {
-      await createProduct({
-        name: productName,
-        description: productDescription,
-        brandId: Number(productBrandId),
-        categoryId: Number(productCategoryId),
-        variants: [
-          {
-            sku: variantSku,
-            price: Number(variantPrice),
-            stockQuantity: Number(variantStock),
-            weight: isRacketCategory ? variantWeight : '',
-            gripSize: isRacketCategory ? variantGripSize : '',
-            shoeSize: isShoeCategory ? variantShoeSize : '',
-            color: variantColor,
-          },
-        ],
-      })
+        try {
+            await createProduct({
+                name: productName,
+                description: productDescription,
+                imageUrl: productImageUrl,
+                brandId: Number(productBrandId),
+                categoryId: Number(productCategoryId),
+                variants: [
+                    {
+                        sku: variantSku,
+                        price: Number(variantPrice),
+                        stockQuantity: Number(variantStock),
+                        weight: isRacketCategory ? variantWeight : '',
+                        gripSize: isRacketCategory ? variantGripSize : '',
+                        shoeSize: isShoeCategory ? variantShoeSize : '',
+                        color: variantColor,
+                    },
+                ],
+            })
 
-      setProductName('')
-      setProductDescription('')
-      setProductBrandId('')
-      setProductCategoryId('')
-      setVariantSku('')
-      setVariantPrice('')
-      setVariantStock('')
-      setVariantWeight('')
-      setVariantGripSize('')
-      setVariantShoeSize('')
-      setVariantColor('')
-      setProductMessage('Đã tạo sản phẩm.')
-      await loadProducts()
-    } catch (error) {
-      setProductMessage(error instanceof Error ? error.message : 'Đã xảy ra lỗi.')
+            setProductName('')
+            setProductDescription('')
+            setProductImageUrl('')
+            setProductBrandId('')
+            setProductCategoryId('')
+            setVariantSku('')
+            setVariantPrice('')
+            setVariantStock('')
+            setVariantWeight('')
+            setVariantGripSize('')
+            setVariantShoeSize('')
+            setVariantColor('')
+            setProductMessage('Đã tạo sản phẩm.')
+            await loadProducts()
+        } catch (error) {
+            setProductMessage(error instanceof Error ? error.message : 'Đã xảy ra lỗi.')
+        }
     }
-  }
 
-  useEffect(() => {
-    loadProducts()
-  }, [])
+    useEffect(() => {
+        loadProducts()
+    }, [])
 
-  return (
-    <section className="content-grid section-gap">
-      <form className="panel" onSubmit={handleCreateProduct}>
-        <h2>Tạo sản phẩm</h2>
+    return (
+        <section className="content-grid section-gap">
+            <form className="panel" onSubmit={handleCreateProduct}>
+                <h2>Tạo sản phẩm</h2>
 
-        <label>
-          Tên sản phẩm
-          <input
-            value={productName}
-            onChange={(event) => setProductName(event.target.value)}
-            placeholder="Yonex Astrox 88D Pro"
-            required
-          />
-        </label>
+                <label>
+                    Tên sản phẩm
+                    <input
+                        value={productName}
+                        onChange={(event) => setProductName(event.target.value)}
+                        placeholder="Yonex Astrox 88D Pro"
+                        required
+                    />
+                </label>
 
-        <label>
-          Mô tả
-          <textarea
-            value={productDescription}
-            onChange={(event) => setProductDescription(event.target.value)}
-            placeholder="Vợt cầu lông thiên công, nặng đầu"
-          />
-        </label>
+                <label>
+                    Mô tả
+                    <textarea
+                        value={productDescription}
+                        onChange={(event) => setProductDescription(event.target.value)}
+                        placeholder="Vợt cầu lông thiên công, nặng đầu"
+                    />
+                </label>
 
-        <label>
-          Thương hiệu
-          <select
-            value={productBrandId}
-            onChange={(event) => setProductBrandId(event.target.value)}
-            required
-          >
-            <option value="">Chọn thương hiệu</option>
-            {brands.map((brand) => (
-              <option key={brand.id} value={brand.id}>
-                {brand.name}
-              </option>
-            ))}
-          </select>
-        </label>
+                <label>
+                    URL ảnh sản phẩm
+                    <input
+                        value={productImageUrl}
+                        onChange={(event) => setProductImageUrl(event.target.value)}
+                        placeholder="https://example.com/product.jpg"
+                    />
+                </label>
 
-        <label>
-          Danh mục
-          <select
-            value={productCategoryId}
-            onChange={(event) => {
-              setProductCategoryId(event.target.value)
+                <label>
+                    Thương hiệu
+                    <select
+                        value={productBrandId}
+                        onChange={(event) => setProductBrandId(event.target.value)}
+                        required
+                    >
+                        <option value="">Chọn thương hiệu</option>
+                        {brands.map((brand) => (
+                            <option key={brand.id} value={brand.id}>
+                                {brand.name}
+                            </option>
+                        ))}
+                    </select>
+                </label>
 
-              const category = categories.find(
-                (item) => item.id === Number(event.target.value),
-              )
-              const categoryName = category?.name.toLowerCase() ?? ''
+                <label>
+                    Danh mục
+                    <select
+                        value={productCategoryId}
+                        onChange={(event) => {
+                            setProductCategoryId(event.target.value)
 
-              if (!categoryName.includes('giày')) {
-                setVariantShoeSize('')
-              }
+                            const category = categories.find(
+                                (item) => item.id === Number(event.target.value),
+                            )
+                            const categoryName = category?.name.toLowerCase() ?? ''
 
-              if (!categoryName.includes('vợt')) {
-                setVariantWeight('')
-                setVariantGripSize('')
-              }
-            }}
-            required
-          >
-            <option value="">Chọn danh mục</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </label>
+                            if (!categoryName.includes('giày')) {
+                                setVariantShoeSize('')
+                            }
 
-        <div className="form-divider">Biến thể</div>
+                            if (!categoryName.includes('vợt')) {
+                                setVariantWeight('')
+                                setVariantGripSize('')
+                            }
+                        }}
+                        required
+                    >
+                        <option value="">Chọn danh mục</option>
+                        {categories.map((category) => (
+                            <option key={category.id} value={category.id}>
+                                {category.name}
+                            </option>
+                        ))}
+                    </select>
+                </label>
 
-        <label>
-          SKU
-          <input
-            value={variantSku}
-            onChange={(event) => setVariantSku(event.target.value)}
-            placeholder="AX88DPRO-4UG5"
-            required
-          />
-        </label>
+                <div className="form-divider">Biến thể</div>
 
-        <div className="form-row">
-          <label>
-            Giá bán
-            <input
-              type="number"
-              min="0"
-              value={variantPrice}
-              onChange={(event) => setVariantPrice(event.target.value)}
-              placeholder="4290000"
-              required
-            />
-          </label>
+                <label>
+                    SKU
+                    <input
+                        value={variantSku}
+                        onChange={(event) => setVariantSku(event.target.value)}
+                        placeholder="AX88DPRO-4UG5"
+                        required
+                    />
+                </label>
 
-          <label>
-            Tồn kho
-            <input
-              type="number"
-              min="0"
-              value={variantStock}
-              onChange={(event) => setVariantStock(event.target.value)}
-              placeholder="10"
-              required
-            />
-          </label>
-        </div>
+                <div className="form-row">
+                    <label>
+                        Giá bán
+                        <input
+                            type="number"
+                            min="0"
+                            value={variantPrice}
+                            onChange={(event) => setVariantPrice(event.target.value)}
+                            placeholder="4290000"
+                            required
+                        />
+                    </label>
 
-        {isShoeCategory && (
-          <label>
-            Size giày
-            <input
-              value={variantShoeSize}
-              onChange={(event) => setVariantShoeSize(event.target.value)}
-              placeholder="42"
-            />
-          </label>
-        )}
+                    <label>
+                        Tồn kho
+                        <input
+                            type="number"
+                            min="0"
+                            value={variantStock}
+                            onChange={(event) => setVariantStock(event.target.value)}
+                            placeholder="10"
+                            required
+                        />
+                    </label>
+                </div>
 
-        {isRacketCategory && (
-          <div className="form-row">
-            <label>
-              Trọng lượng
-              <input
-                value={variantWeight}
-                onChange={(event) => setVariantWeight(event.target.value)}
-                placeholder="4U"
-              />
-            </label>
+                {isShoeCategory && (
+                    <label>
+                        Size giày
+                        <input
+                            value={variantShoeSize}
+                            onChange={(event) => setVariantShoeSize(event.target.value)}
+                            placeholder="42"
+                        />
+                    </label>
+                )}
 
-            <label>
-              Chu vi cán
-              <input
-                value={variantGripSize}
-                onChange={(event) => setVariantGripSize(event.target.value)}
-                placeholder="G5"
-              />
-            </label>
-          </div>
-        )}
+                {isRacketCategory && (
+                    <div className="form-row">
+                        <label>
+                            Trọng lượng
+                            <input
+                                value={variantWeight}
+                                onChange={(event) => setVariantWeight(event.target.value)}
+                                placeholder="4U"
+                            />
+                        </label>
 
-        <label>
-          Màu sắc
-          <input
-            value={variantColor}
-            onChange={(event) => setVariantColor(event.target.value)}
-            placeholder="Camel Gold"
-          />
-        </label>
+                        <label>
+                            Chu vi cán
+                            <input
+                                value={variantGripSize}
+                                onChange={(event) => setVariantGripSize(event.target.value)}
+                                placeholder="G5"
+                            />
+                        </label>
+                    </div>
+                )}
 
-        <button type="submit">Tạo sản phẩm</button>
+                <label>
+                    Màu sắc
+                    <input
+                        value={variantColor}
+                        onChange={(event) => setVariantColor(event.target.value)}
+                        placeholder="Camel Gold"
+                    />
+                </label>
 
-        {productMessage && <p className="message">{productMessage}</p>}
-      </form>
+                <button type="submit">Tạo sản phẩm</button>
 
-      <section className="panel">
-        <h2>Danh sách sản phẩm</h2>
+                {productMessage && <p className="message">{productMessage}</p>}
+            </form>
 
-        <div className="filter-bar">
-          <label>
-            Tìm kiếm
-            <input
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Tên sản phẩm hoặc SKU"
-            />
-          </label>
+            <section className="panel">
+                <h2>Danh sách sản phẩm</h2>
 
-          <label>
-            Thương hiệu
-            <select
-              value={filterBrandId}
-              onChange={(event) => setFilterBrandId(event.target.value)}
-            >
-              <option value="">Tất cả thương hiệu</option>
-              {brands.map((brand) => (
-                <option key={brand.id} value={brand.id}>
-                  {brand.name}
-                </option>
-              ))}
-            </select>
-          </label>
+                <div className="filter-bar">
+                    <label>
+                        Tìm kiếm
+                        <input
+                            value={searchTerm}
+                            onChange={(event) => setSearchTerm(event.target.value)}
+                            placeholder="Tên sản phẩm hoặc SKU"
+                        />
+                    </label>
 
-          <label>
-            Danh mục
-            <select
-              value={filterCategoryId}
-              onChange={(event) => setFilterCategoryId(event.target.value)}
-            >
-              <option value="">Tất cả danh mục</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
+                    <label>
+                        Thương hiệu
+                        <select
+                            value={filterBrandId}
+                            onChange={(event) => setFilterBrandId(event.target.value)}
+                        >
+                            <option value="">Tất cả thương hiệu</option>
+                            {brands.map((brand) => (
+                                <option key={brand.id} value={brand.id}>
+                                    {brand.name}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
 
-        <div className="product-list">
-          {filteredProducts.map((product) => (
-            <article className="product-item" key={product.id}>
-              <div>
-                <h3>{product.name}</h3>
-                <p>{product.description || 'Chưa có mô tả'}</p>
-                <p>
-                  {product.brand?.name} · {product.category?.name}
-                </p>
-              </div>
+                    <label>
+                        Danh mục
+                        <select
+                            value={filterCategoryId}
+                            onChange={(event) => setFilterCategoryId(event.target.value)}
+                        >
+                            <option value="">Tất cả danh mục</option>
+                            {categories.map((category) => (
+                                <option key={category.id} value={category.id}>
+                                    {category.name}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
+                </div>
 
-              <div className="variant-list">
-                {product.variants.map((variant) => (
-                  <span key={variant.id}>
-                    {variant.sku} · {variant.price.toLocaleString('vi-VN')} VND · Tồn kho{' '}
-                    {variant.stockQuantity}
-                    {variant.weight ? ` · ${variant.weight}` : ''}
-                    {variant.gripSize ? `/${variant.gripSize}` : ''}
-                    {variant.shoeSize ? ` · Size ${variant.shoeSize}` : ''}
-                    {variant.color ? ` · ${variant.color}` : ''}
-                  </span>
-                ))}
-              </div>
-            </article>
-          ))}
-        </div>
+                <div className="product-list">
+                    {filteredProducts.map((product) => (
+                        <article className="product-item" key={product.id}>
+                            {product.imageUrl && (
+                                <img className="product-image" src={product.imageUrl} alt={product.name} />
+                            )}
 
-        {filteredProducts.length === 0 && <p className="muted">Không có sản phẩm phù hợp.</p>}
-      </section>
-    </section>
-  )
+                            <div>
+                                <h3>{product.name}</h3>
+                                <p>{product.description || 'Chưa có mô tả'}</p>
+                                <p>
+                                    {product.brand?.name} · {product.category?.name}
+                                </p>
+                            </div>
+
+                            <div className="variant-list">
+                                {product.variants.map((variant) => (
+                                    <span key={variant.id}>
+                                        {variant.sku} · {variant.price.toLocaleString('vi-VN')} VND · Tồn kho{' '}
+                                        {variant.stockQuantity}
+                                        {variant.weight ? ` · ${variant.weight}` : ''}
+                                        {variant.gripSize ? `/${variant.gripSize}` : ''}
+                                        {variant.shoeSize ? ` · Size ${variant.shoeSize}` : ''}
+                                        {variant.color ? ` · ${variant.color}` : ''}
+                                    </span>
+                                ))}
+                            </div>
+                        </article>
+                    ))}
+                </div>
+
+                {filteredProducts.length === 0 && <p className="muted">Không có sản phẩm phù hợp.</p>}
+            </section>
+        </section>
+    )
 }

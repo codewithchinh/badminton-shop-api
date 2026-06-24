@@ -11,6 +11,9 @@ public class CreateProductRequest
     [MaxLength(2000)]
     public string? Description { get; set; }
 
+    [MaxLength(1000)]
+    public string? ImageUrl { get; set; }
+
     [Range(1, int.MaxValue)]
     public int BrandId { get; set; }
 
