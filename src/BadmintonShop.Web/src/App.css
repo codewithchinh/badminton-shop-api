@@ -199,3 +199,17 @@ button:hover {
     grid-template-columns: 1fr;
   }
 }
+
+.product-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.product-actions button {
+  background: #dc2626;
+}
+
+.product-actions button:hover {
+  background: #b91c1c;
+}

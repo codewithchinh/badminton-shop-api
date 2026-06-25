@@ -1,3 +1,5 @@
+import { apiBaseUrl } from "../api/config"
+
 export type Brand = {
     id: number
     name: string
@@ -39,4 +41,14 @@ export type Product = {
     isActive: boolean
     createdAt: string
     variants: ProductVariant[]
+}
+
+export async function deleteProduct(productId: number) {
+    const response = await fetch(`${apiBaseUrl}/products/${productId}`, {
+        method: 'DELETE',
+    })
+
+    if (!response.ok) {
+        throw new Error('Không thể xóa sản phẩm.')
+    }
 }

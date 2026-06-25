@@ -112,3 +112,123 @@ Content-Type: application/json
     }
   ]
 }
+
+@BadmintonShop.Api_HostAddress = http://localhost:5120
+
+GET {{BadmintonShop.Api_HostAddress}}/api/brands
+Accept: application/json
+
+###
+
+POST {{BadmintonShop.Api_HostAddress}}/api/brands
+Content-Type: application/json
+
+{
+  "name": "Yonex",
+  "description": "Japanese badminton equipment brand"
+}
+
+###
+
+POST {{BadmintonShop.Api_HostAddress}}/api/brands
+Content-Type: application/json
+
+{
+  "name": "Lining",
+  "description": "Chinese badminton equipment brand"
+}
+
+### CAGEGOIES
+
+GET {{BadmintonShop.Api_HostAddress}}/api/categories
+Accept: application/json
+
+###
+
+POST {{BadmintonShop.Api_HostAddress}}/api/categories
+Content-Type: application/json
+
+{
+  "name": "Rackets",
+  "description": "Badminton rackets"
+}
+
+###
+
+POST {{BadmintonShop.Api_HostAddress}}/api/categories
+Content-Type: application/json
+
+{
+  "name": "Shoes",
+  "description": "Badminton shoes"
+}
+
+### Test lỗi name/description khi tạo cagegory
+
+POST {{BadmintonShop.Api_HostAddress}}/api/categories
+Content-Type: application/json
+
+{
+  "name": "",
+  "description": "This should fail"
+}
+
+### Test tạo trùng brand:
+
+POST {{BadmintonShop.Api_HostAddress}}/api/brands
+Content-Type: application/json
+
+{
+  "name": "Yonex",
+  "description": "Duplicate test"
+}
+
+### Test tạo trùng category:
+
+POST {{BadmintonShop.Api_HostAddress}}/api/categories
+Content-Type: application/json
+
+{
+  "name": "Shoes",
+  "description": "Duplicate test"
+}
+
+### Test create project
+
+GET {{BadmintonShop.Api_HostAddress}}/api/products
+Accept: application/json
+
+###
+
+POST {{BadmintonShop.Api_HostAddress}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Yonex Astrox 88D Pro",
+  "description": "Head-heavy attacking badminton racket",
+  "brandId": 1,
+  "categoryId": 1,
+  "variants": [
+    {
+      "sku": "AX88DPRO-4UG5",
+      "price": 4290000,
+      "stockQuantity": 10,
+      "weight": "4U",
+      "gripSize": "G5",
+      "color": "Camel Gold"
+    },
+    {
+      "sku": "AX88DPRO-3UG5",
+      "price": 4290000,
+      "stockQuantity": 5,
+      "weight": "3U",
+      "gripSize": "G5",
+      "color": "Camel Gold"
+    }
+  ]
+}
+  ### Test xóa sản phẩm
+
+  DELETE {{BadmintonShop.Api_HostAddress}}/api/products/1
+  Accept: application/json
+  

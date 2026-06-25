@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { createProduct, getProducts } from '../api/catalogApi'
+import { createProduct, deleteProduct, getProducts } from '../api/catalogApi'
 import type { Brand, Category, Product } from '../types/catalog'
 
 type ProductManagerProps = {
@@ -81,6 +81,22 @@ export function ProductManager({ brands, categories }: ProductManagerProps) {
       setProducts(data)
     } catch (error) {
       setProductMessage(error instanceof Error ? error.message : 'Đã xảy ra lỗi.')
+    }
+  }
+
+  async function handleDeleteProduct(productId: number) {
+    const confirmed = window.confirm('Bạn có chắc muốn xóa sản phẩm này không?')
+
+    if (!confirmed) {
+      return
+    }
+
+    try {
+      await deleteProduct(productId)
+      await loadProducts()
+      setProductMessage('Đã xóa sản phẩm.')
+    } catch {
+      setProductMessage('Không thể xóa sản phẩm.')
     }
   }
 
@@ -396,6 +412,11 @@ export function ProductManager({ brands, categories }: ProductManagerProps) {
                     {variant.color ? ` · ${variant.color}` : ''}
                   </span>
                 ))}
+              </div>
+              <div className="product-actions">
+                <button type="button" onClick={() => handleDeleteProduct(product.id)}>
+                  Xóa
+                </button>
               </div>
             </article>
           ))}
